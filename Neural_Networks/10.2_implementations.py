@@ -50,12 +50,12 @@ import statistics as stats
 
 scalar = MinMaxScaler()
 data = fetch_california_housing()
-#
-# # Data splitting & preprocessing
+# #
+# # # Data splitting & preprocessing
 x_ftrain, x_test, y_ftrain, y_test = train_test_split(data.data, data.target)
 x_train, x_valid, y_train, y_valid = train_test_split(x_ftrain, y_ftrain)
-#
-# Scaling X Data
+# #
+# # Scaling X Data
 x_train_scaled = scalar.fit_transform(x_train)
 x_test_scaled = scalar.fit_transform(x_test)
 x_valid_scaled = scalar.fit_transform(x_valid)
@@ -116,54 +116,54 @@ X_new_A, X_new_B = X_test_A[:3], X_test_B[:3]
 # Complex Network #2 - Network retains the previous structure but can also have multiple kinds of output
 
 # Input Layer
-input_A = tf.keras.layers.Input(shape=[5])
-input_B = tf.keras.layers.Input(shape=[6])
-
-# Hidden Layers
-hidden_1 = tf.keras.layers.Dense(200, activation="sigmoid")(input_B)
-hidden_2 = tf.keras.layers.Dense(200, activation="sigmoid")(hidden_1)
-
-# Concatenate Layer
-concat = tf.keras.layers.concatenate([input_A, hidden_2])
-
-# Outputs
-output_A = tf.keras.layers.Dense(1)(concat)
-output_B = tf.keras.layers.Dense(1)(hidden_2)
-
-# Model creation & compilation
-model = tf.keras.models.Model(inputs=[input_A, input_B], outputs=[output_A, output_B])
-model.compile(loss=["mse", "mse"], optimizer="sgd", metrics=['accuracy', 'accuracy'])
-
-# Model Fit
-model.fit([X_train_A, X_train_B], [y_train, y_train], epochs=20, validation_data=([X_valid_A, X_valid_B], [y_valid, y_valid]))
-
-# Model Results
-predicted_values = model.predict([X_test_A, X_test_B])[0][:5]
-print(f"Predicted values: {predicted_values}")
-print(f"Actual values: {y_test}")
-
-# Save Model
-model.save("WideAndDeep.keras")
+# input_A = tf.keras.layers.Input(shape=[5])
+# input_B = tf.keras.layers.Input(shape=[6])
+#
+# # Hidden Layers
+# hidden_1 = tf.keras.layers.Dense(200, activation="sigmoid")(input_B)
+# hidden_2 = tf.keras.layers.Dense(200, activation="sigmoid")(hidden_1)
+#
+# # Concatenate Layer
+# concat = tf.keras.layers.concatenate([input_A, hidden_2])
+#
+# # Outputs
+# output_A = tf.keras.layers.Dense(1)(concat)
+# output_B = tf.keras.layers.Dense(1)(hidden_2)
+#
+# # Model creation & compilation
+# model = tf.keras.models.Model(inputs=[input_A, input_B], outputs=[output_A, output_B])
+# model.compile(loss=["mse", "mse"], optimizer="sgd", metrics=['accuracy', 'accuracy'])
+#
+# # Model Fit
+# model.fit([X_train_A, X_train_B], [y_train, y_train], epochs=20, validation_data=([X_valid_A, X_valid_B], [y_valid, y_valid]))
+#
+# # Model Results
+# predicted_values = model.predict([X_test_A, X_test_B])[0][:5]
+# print(f"Predicted values: {predicted_values}")
+# print(f"Actual values: {y_test}")
+#
+# # Save Model
+# model.save("WideAndDeep.keras")
 
 # Implementing a WideAndDeep Subclass object
-# model = WideAndDeep()
+model = WideAndDeep()
 #
-# model.compile(loss=["mse", "mse"], optimizer="sgd")
-# model.fit([X_train_A, X_train_B], [y_train, y_train], epochs=20, validation_data=([X_valid_A, X_valid_B], [y_valid, y_valid]))
+model.compile(loss=["mse", "mse"], optimizer="sgd")
+model.fit([X_train_A, X_train_B], [y_train, y_train], epochs=20, validation_data=([X_valid_A, X_valid_B], [y_valid, y_valid]))
 #
 # predicted_vals = model.predict([X_test_A, X_test_B])
 # print(f"Test MSE: {mean_squared_error(predicted_vals[0], y_test)}")
 
 # Create checkpoint callbacks for model during epoches
-deployed_network = tf.keras.models.load_model("WideAndDeep.keras")
-
-# Create checkpoint-callback and fit model with it
-checkpoint_cb = tf.keras.callbacks.ModelCheckpoint("WideAndDeep.keras", save_best_only=True)
-deployed_network.fit([X_train_A, X_train_B], y_train, validation_data=((X_valid_A,X_valid_B), y_valid), epochs=15, callbacks=[checkpoint_cb])
-
-# Returns model that preforms best on valdiation due to "save_best_only"
-model = tf.keras.load.load_model("WideAndDeep.keras")
-
-# Early stopping
-early_stopping_cb = tf.keras.callbacks.EarlyStopping(patience=10, restore_best_weights=True)
-deployed_network.fit([X_train_A, X_train_B], y_train, validation_data=(([X_valid_A,X_valid_B]), y_valid), epochs=50, callbacks=[early_stopping_cb, checkpoint_cb])
+# deployed_network = tf.keras.models.load_model("WideAndDeep.keras")
+#
+# # Create checkpoint-callback and fit model with it
+# checkpoint_cb = tf.keras.callbacks.ModelCheckpoint("WideAndDeep.keras", save_best_only=True)
+# deployed_network.fit([X_train_A, X_train_B], y_train, validation_data=((X_valid_A,X_valid_B), y_valid), epochs=15, callbacks=[checkpoint_cb])
+#
+# # Returns model that preforms best on validation due to "save_best_only"
+# model = tf.keras.models.load_model("WideAndDeep.keras")
+#
+# # Early stopping
+# early_stopping_cb = tf.keras.callbacks.EarlyStopping(patience=10, restore_best_weights=True)
+# deployed_network.fit([X_train_A, X_train_B], y_train, validation_data=(([X_valid_A,X_valid_B]), y_valid), epochs=50, callbacks=[early_stopping_cb, checkpoint_cb])

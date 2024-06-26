@@ -5,7 +5,7 @@ import tensorflow as tf
 class WideAndDeep(tf.keras.models.Model):
 
     # Initialization of WideAndDeep model parameters & layers
-    def __init__(self, units=75, activation="sigmoid", **kwargs):
+    def __init__(self, units=75, activation="relu", **kwargs):
         super().__init__(**kwargs)
         self.hidden_1 = tf.keras.layers.Dense(units, activation)
         self.hidden_2 = tf.keras.layers.Dense(units, activation)
